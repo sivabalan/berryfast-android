@@ -1,12 +1,12 @@
-package com.fruitmill.speedlight.utils;
+package com.fruitmill.speedlight.common;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Scanner;
+import java.util.Arrays;
+import java.util.List;
+
+import android.graphics.Color;
 
 public class Utilities {
 	private Utilities() {}
@@ -41,4 +41,36 @@ public class Utilities {
 		return buffer.toString();
 	}
 
+//	public static List<Integer> generateLEDColor(List<Integer> args) {
+//		if(args == null)
+//		{
+//			args = Arrays.asList(255, 0, 0);
+//		}
+//		else
+//		{
+//			args.set(0, (args.get(0) + 20)%256);
+//			args.set(1, (args.get(1) + 20)%256);
+//			args.set(2, (args.get(2) + 20)%256);
+//		}
+//		return args;
+//	}
+	
+	public static double[] generateLEDColor(double[] args) {
+		if(args == null)
+		{
+			args = new double[]{0, 255, 0};
+		}
+		else
+		{
+			if(args[0] < 255)
+			{
+				args[0] = Math.pow(2,(Math.log(args[0]+1)/Math.log(2))+0.01); 
+				//args[0] = (args[0] + 1)%256;
+				args[1] = Math.pow(2,(Math.log(args[1])/Math.log(2))-0.01);
+			}
+			args[2] = 0;
+			
+		}
+		return args;
+	}
 }

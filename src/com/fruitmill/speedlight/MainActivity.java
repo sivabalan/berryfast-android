@@ -3,10 +3,9 @@ package com.fruitmill.speedlight;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.List;
 import java.util.Scanner;
 import java.util.UUID;
-
-import com.fruitmill.speedlight.utils.Utilities;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -17,7 +16,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.provider.Telephony.Sms.Conversations;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -26,9 +24,13 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.fruitmill.speedlight.common.Commands;
+import com.fruitmill.speedlight.common.Utilities;
+
 public class MainActivity extends Activity {
 
 	private Button sendBtn;
+	private Button stopBtn;
 	private BluetoothAdapter myBluetoothAdapter;
 	private BluetoothSocket socket = null;
 	
@@ -36,6 +38,7 @@ public class MainActivity extends Activity {
 	private int REQUEST_ENABLE_BT = 0;
 	private UUID SL_UUID = UUID.fromString("059c01eb-feaa-0e13-ffc4-f5d6f3be76d9");
 	private Scanner inputScanner = null; //God awful scanner
+	private boolean dataSwitch = true;
 	
 	private String slPiAddress = "";
 	
@@ -68,6 +71,8 @@ public class MainActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				
+				dataSwitch = true;
+				
 				if (myBluetoothAdapter == null) 
 				{
 			          Log.d(TAG , "No bluetooth");
@@ -77,12 +82,44 @@ public class MainActivity extends Activity {
 				try {
 					if(socket != null && socket.isConnected())
 					{
-						OutputStream tmpOut = null;
-						tmpOut = socket.getOutputStream();
-
-						String str = "{\"commands\": [{\"command\": \"neutral response\", \"value\": \"maybe\"}]}";
-						tmpOut.write(str.getBytes());
-
+						final OutputStream tmpOut = socket.getOutputStream();
+						
+						Thread thread = new Thread() {
+							public void run() {
+								
+								double[] colorVal = null;
+								double[] prevColorVal = null;
+								
+								while(dataSwitch)
+								{
+									colorVal = Utilities.generateLEDColor(prevColorVal);
+					
+									final Commands cmds = new Commands();
+									
+									cmds.add("led_color", colorVal);
+									
+									Log.d(TAG, cmds.getJSON());
+									
+//									try {
+//										Thread.sleep(100);
+//									} catch (InterruptedException e) {
+//										// TODO Auto-generated catch block
+//										e.printStackTrace();
+//									}
+									try {
+										tmpOut.write(cmds.getJSON().getBytes());
+									} catch (IOException e) {
+										// TODO Auto-generated catch block
+										e.printStackTrace();
+									}
+									if(colorVal[1] < 1) { break; }
+									prevColorVal = colorVal;
+								}
+							}
+						};
+						thread.start();
+						
+						
 						Toast.makeText(getApplicationContext(), socket.getRemoteDevice().getName(),
 								Toast.LENGTH_LONG).show();
 					}
@@ -92,6 +129,40 @@ public class MainActivity extends Activity {
 				}
 			}
 		  });
+		
+		stopBtn = (Button)findViewById(R.id.sdpSendStop);
+		stopBtn.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				Log.d(TAG, "Stopping SDP data");
+				dataSwitch = false;
+				
+				if (myBluetoothAdapter == null) 
+				{
+			          Log.d(TAG , "No bluetooth");
+			    }
+			
+				// Get a BluetoothSocket to connect with the given BluetoothDevice
+				try {
+					if(socket != null && socket.isConnected())
+					{
+						final OutputStream tmpOut = socket.getOutputStream();
+						
+						final Commands cmds = new Commands();
+						cmds.add("led_color", new int[]{0, 0, 0});
+						
+						tmpOut.write(cmds.getJSON().getBytes());
+						
+						Toast.makeText(getApplicationContext(), socket.getRemoteDevice().getName(),
+								Toast.LENGTH_LONG).show();
+					}
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		});
 	}
 
 	final BroadcastReceiver blueToothStatusReceiver = new BroadcastReceiver() {

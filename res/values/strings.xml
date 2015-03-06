@@ -3,6 +3,7 @@
 
     <string name="app_name">SpeedLight</string>
     <string name="send_data">Send SDP Data</string>
+    <string name="stop_data">Stop SDP Data</string>
     <string name="action_settings">Settings</string>
 
 </resources>
