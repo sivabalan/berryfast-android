@@ -1,4 +1,4 @@
-package com.fruitmill.speedlight.common;
+package com.fruitmill.berryfast.common;
 
 import org.json.JSONArray;
 import org.json.JSONException;

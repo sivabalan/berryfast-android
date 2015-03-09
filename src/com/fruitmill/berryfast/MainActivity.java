@@ -1,4 +1,4 @@
-package com.fruitmill.speedlight;
+package com.fruitmill.berryfast;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,8 +24,9 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.fruitmill.speedlight.common.Commands;
-import com.fruitmill.speedlight.common.Utilities;
+import com.fruitmill.berryfast.common.Commands;
+import com.fruitmill.berryfast.common.Utilities;
+import com.fruitmill.speedlight.R;
 
 public class MainActivity extends Activity {
 

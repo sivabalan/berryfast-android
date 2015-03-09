@@ -1,4 +1,4 @@
-package com.fruitmill.speedlight.common;
+package com.fruitmill.berryfast.common;
 
 import java.math.BigInteger;
 import java.security.MessageDigest;

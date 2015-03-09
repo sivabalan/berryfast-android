@@ -1,4 +1,4 @@
-package com.fruitmill.speedlight;
+package com.fruitmill.berryfast;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
