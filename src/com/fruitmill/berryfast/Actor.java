@@ -42,7 +42,7 @@ public abstract class Actor extends Thread {
 		return this.name;
 	}
 
-	public void send(Actor recipient, Object[] message) {
+	public static void send(Actor recipient, Object[] message) {
 		try {
 			recipient.queue.put(message);
 		} catch (InterruptedException e) {
