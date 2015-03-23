@@ -2,6 +2,7 @@ package com.fruitmill.berryfast;
 
 import android.app.Activity;
 import android.content.Context;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.fruitmill.speedlight.R;
 
 public class MainActivity extends Activity {
     private static Context context;
+    private static LocationManager locationManager;
 
 	private Button sendBtn = null;
 	private Button stopBtn = null;
@@ -27,6 +29,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		context = getApplicationContext();
+        locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 		// create command center
         // create bluetooth listener
         // create speedlimit checker
@@ -91,6 +94,9 @@ public class MainActivity extends Activity {
 
     public static Context getContext() {
         return context;
+    }
+    public static LocationManager getLocManager() {
+        return locationManager;
     }
 	
 //	@Override
